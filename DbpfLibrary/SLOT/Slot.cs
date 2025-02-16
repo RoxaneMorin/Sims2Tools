@@ -15,6 +15,7 @@ using Sims2Tools.DBPF.Package;
 using Sims2Tools.DBPF.Utils;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 using System.Xml;
 
 namespace Sims2Tools.DBPF.SLOT
@@ -25,7 +26,9 @@ namespace Sims2Tools.DBPF.SLOT
         public static readonly TypeTypeID TYPE = (TypeTypeID)0x534C4F54;
         public const string NAME = "SLOT";
 
+        private uint typeHandler = 1397509972; // Common value found in all but one tested packages.
         private uint version = 4;
+        private uint classID = 0; // "Always null" as per https://modthesims.info/wiki.php?title=534C4F54
 
         private List<SlotItem> items;
 
@@ -45,9 +48,9 @@ namespace Sims2Tools.DBPF.SLOT
         {
             this._keyName = Helper.ToString(reader.ReadBytes(0x40));
 
-            _ = reader.ReadUInt32();
+            typeHandler = reader.ReadUInt32();
             version = reader.ReadUInt32();
-            _ = reader.ReadUInt32();
+            classID = reader.ReadUInt32();
 
             int entries = reader.ReadInt32();
 
@@ -60,6 +63,40 @@ namespace Sims2Tools.DBPF.SLOT
                 this.items.Add(item);
             }
         }
+
+        public override uint FileSize
+        {
+            get
+            {
+                uint size = 0x40 + 4 * 4;
+
+                // Add in the items' sizes.
+                foreach (SlotItem slotItem in this.items)
+                {
+                    size += slotItem.FileSize;
+                }
+
+                return size;
+            }
+        }
+
+        public override void Serialize(DbpfWriter writer)
+        {
+            writer.WriteBytes(Encoding.ASCII.GetBytes(KeyName), 0x40);
+
+            writer.WriteUInt32((uint)typeHandler);
+            writer.WriteUInt32((uint)version);
+            writer.WriteUInt32((uint)classID);
+
+            int count = items.Count;
+            writer.WriteUInt32((uint)count);
+
+            foreach (SlotItem slotItem in items)
+            {
+                slotItem.Serialize(writer);
+            }
+        }
+
 
         public override XmlElement AddXml(XmlElement parent)
         {

@@ -151,6 +151,116 @@ namespace Sims2Tools.DBPF.SLOT
                 unknowni10 = reader.ReadInt32();
             }
         }
+
+
+        public uint FileSize
+        {
+            get
+            {
+                // Could a switch be used here instead? Do versions between 9, 0x10 and 0x40 exist?
+
+                if (version >= 0x40)
+                {
+                    // >= 0x40 : 2 + 8 * 4 + 4 * 4 + 2 * 2 + 4 + 4 + 4 + 4 + 2 * 4
+                    return 78;
+                }
+                else if (version >= 0x10)
+                {
+                    // >= 0x10 : 2 + 8 * 4 + 4 * 4 + 2 * 2 + 4 + 4 + 4 + 4
+                    return 70;
+                }
+                else if (version >= 9)
+                {
+                    // >= 9 : 2 + 8 * 4 + 4 * 4 + 2 * 2 + 4 + 4 + 4
+                    return 66;
+                }
+                else if (version >= 8)
+                {
+                    // >= 8 : 2 + 8 * 4 + 4 * 4 + 2 * 2 + 4 + 4
+                    return 62;
+                }
+                else if (version >= 7)
+                {
+                    // >= 7 : 2 + 8 * 4 + 4 * 4 + 2 * 2 + 4
+                    return 58;
+                }
+                else if (version >= 6)
+                {
+                    // >= 6 : 2 + 8 * 4 + 4 * 4 + 2 * 2
+                    return 54;
+
+                }
+                else if (version >= 5)
+                {
+                    // >= 5: 2 + 8 * 4 + 4 * 4
+                    return 50;
+                }
+                else
+                {
+                    // base: 2 + 8 * 4
+                    return 34;
+                }
+            }
+        }
+
+
+        public void Serialize(DbpfWriter writer)
+        {
+            writer.WriteUInt16((ushort)type);
+
+            writer.WriteSingle(unknownf1);
+            writer.WriteSingle(unknownf2);
+            writer.WriteSingle(unknownf3);
+
+            writer.WriteInt32(unknowni1);
+            writer.WriteInt32(unknowni2);
+            writer.WriteInt32(unknowni3);
+            writer.WriteInt32(unknowni4);
+            writer.WriteInt32(unknowni5);
+
+            if (version >= 5)
+            {
+                writer.WriteSingle(unknownf4);
+                writer.WriteSingle(unknownf5);
+                writer.WriteSingle(unknownf6);
+
+                writer.WriteInt32(unknowni6);
+            }
+
+            if (version >= 6)
+            {
+                writer.WriteInt16(unknowns1);
+                writer.WriteInt16(unknowns2);
+            }
+
+            if (version >= 7)
+            {
+                writer.WriteSingle(unknownf7);
+            }
+
+            if (version >= 8)
+            {
+                writer.WriteInt32(unknowni7);
+            }
+
+            if (version >= 9)
+            {
+                writer.WriteInt32(unknowni8);
+            }
+
+            if (version >= 0x10)
+            {
+                writer.WriteSingle(unknownf8);
+            }
+
+            if (version >= 0x40)
+            {
+                writer.WriteInt32(unknowni9);
+                writer.WriteInt32(unknowni10);
+            }
+        }
+
+
         public XmlElement AddXml(XmlElement parent)
         {
             XmlElement element = parent.OwnerDocument.CreateElement("item");
