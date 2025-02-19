@@ -26,9 +26,9 @@ namespace Sims2Tools.DBPF.SLOT
         public static readonly TypeTypeID TYPE = (TypeTypeID)0x534C4F54;
         public const string NAME = "SLOT";
 
-        private uint typeHandler = 1397509972; // Common value found in all but one tested packages.
+        private uint typeHandler = 1397509972; // SimPE's code calls this ID instead. "1397509972U" is the value given there and observed in tested packages.
         private uint version = 4;
-        private uint classID = 0; // "Always null" as per https://modthesims.info/wiki.php?title=534C4F54
+        private uint classID = 0; // Named 'Unknown' in SimPE. "Always null" as per https://modthesims.info/wiki.php?title=534C4F54
 
         private List<SlotItem> items;
 
@@ -43,6 +43,25 @@ namespace Sims2Tools.DBPF.SLOT
         {
             get => this.version;
         }
+
+
+        // TODO: add getters, setters, possibly constructor(s).
+
+        // In the decompiled SimPE code, 
+        // classID/Unknown can be gotten and set. Doesn't seem pertinent if it's always zero.
+        // The Slot class has a constructor.
+        // bool CheckVersion(uint version) function.
+
+        // The decompiled code includes a separate "SlotItems" class derived from ArrayList.
+        // It includes:
+        // Get & Set the item at index.
+        // Add item.
+        // Insert item at index.
+        // Remove item.
+        // Contains item?
+        // Length/count property.
+        // Clone function.
+
 
         protected void Unserialize(DbpfReader reader)
         {

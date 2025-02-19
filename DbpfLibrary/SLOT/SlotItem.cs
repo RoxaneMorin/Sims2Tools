@@ -96,6 +96,15 @@ namespace Sims2Tools.DBPF.SLOT
         public short S1 => unknowns1;
         public short S2 => unknowns2;
 
+
+        // TODO: add setters, possibly constructor(s).
+
+        // SimPE's decompiled code has getters and setters for type and all numerical vars.
+        // Its only constructor takes in the parent Slot. Unlikely to be useful here.
+
+        // SimPE reads and writes unknowni9 & unknowni10 regardless of Slot version.
+
+
         internal void Unserialize(DbpfReader reader)
         {
             type = (SlotItemType)reader.ReadUInt16();
