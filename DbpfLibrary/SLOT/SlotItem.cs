@@ -68,43 +68,222 @@ namespace Sims2Tools.DBPF.SLOT
         // Version >=40
         int unknowni9;
         int unknowni10;
+        // SimPE reads and writes unknowni9 & unknowni10 regardless of Slot version. Not sure if it's because it updates all slots to v0x40 anyway.
 
+
+        // To consider: Clone and Equals functions.
+
+
+        #region Constructors
         public SlotItem(uint version) => this.version = version;
-
-        public SlotItemType Type => type;
-
-        public float F1 => unknownf1;
-        public float F2 => unknownf2;
-        public float F3 => unknownf3;
-        public float F4 => unknownf4;
-        public float F5 => unknownf5;
-        public float F6 => unknownf6;
-        public float F7 => unknownf7;
-        public float F8 => unknownf8;
-
-        public int I1 => unknowni1;
-        public int I2 => unknowni2;
-        public int I3 => unknowni3;
-        public int I4 => unknowni4;
-        public int I5 => unknowni5;
-        public int I6 => unknowni6;
-        public int I7 => unknowni7;
-        public int I8 => unknowni8;
-        public int I9 => unknowni9;
-        public int I10 => unknowni10;
-
-        public short S1 => unknowns1;
-        public short S2 => unknowns2;
+        #endregion
 
 
-        // TODO: add setters, possibly constructor(s).
+        #region Clean/Dirty State
+        private bool _isDirty = false;
 
-        // SimPE's decompiled code has getters and setters for type and all numerical vars.
-        // Its only constructor takes in the parent Slot. Unlikely to be useful here.
+        public bool IsDirty => _isDirty;
+        public void SetClean() => _isDirty = false;
+        #endregion
 
-        // SimPE reads and writes unknowni9 & unknowni10 regardless of Slot version.
+
+        #region Properties
+        public SlotItemType Type
+        {
+            get => type;
+            set
+            {
+                type = value;
+                _isDirty = true;
+            }
+        }
+
+        public float F1
+        {
+            get => unknownf1;
+            set 
+            { 
+                unknownf1 = value;
+                _isDirty = true;
+            }
+        }
+        public float F2
+        {
+            get => unknownf2;
+            set 
+            { 
+                unknownf2 = value;
+                _isDirty = true;
+            }
+        }
+        public float F3
+        {
+            get => unknownf3;
+            set 
+            { 
+                unknownf3 = value; 
+                _isDirty = true;
+            }
+        }
+        public float F4
+        {
+            get => unknownf4;
+            set 
+            { 
+                unknownf4 = value;
+                _isDirty = true;
+            }
+        }
+        public float F5
+        {
+            get => unknownf5;
+            set 
+            { 
+                unknownf5 = value;
+                _isDirty = true;
+            }
+        }
+        public float F6
+        {
+            get => unknownf6;
+            set 
+            { 
+                unknownf6 = value;
+                _isDirty = true;
+            }
+        }
+        public float F7
+        {
+            get => unknownf7;
+            set 
+            { 
+                unknownf7 = value;
+                _isDirty = true;
+            }
+        }
+        public float F8
+        {
+            get => unknownf8;
+            set 
+            { 
+                unknownf8 = value;
+                _isDirty = true;
+            }
+        }
+
+        public int I1
+        {
+            get => unknowni1;
+            set 
+            { 
+                unknowni1 = value;
+                _isDirty = true;
+            }
+        }
+        public int I2
+        {
+            get => unknowni2;
+            set 
+            { 
+                unknowni2 = value; 
+                _isDirty = true;
+            }
+        }
+        public int I3
+        {
+            get => unknowni3;
+            set 
+            { 
+                unknowni3 = value; 
+                _isDirty = true;
+            }
+        }
+        public int I4
+        {
+            get => unknowni4;
+            set 
+            { 
+                unknowni4 = value;
+                _isDirty = true;
+            }
+        }
+        public int I5
+        {
+            get => unknowni5;
+            set 
+            { 
+                unknowni5 = value;
+                _isDirty = true;
+            }
+        }
+        public int I6
+        {
+            get => unknowni6;
+            set 
+            { 
+                unknowni6 = value;
+                _isDirty = true;
+            }
+        }
+        public int I7
+        {
+            get => unknowni7;
+            set 
+            { 
+                unknowni7 = value;
+                _isDirty = true;
+            }
+        }
+        public int I8
+        {
+            get => unknowni8;
+            set 
+            { 
+                unknowni8 = value;
+                _isDirty = true;
+            }
+        }
+        public int I9
+        {
+            get => unknowni9;
+            set 
+            { 
+                unknowni9 = value; 
+                _isDirty = true;
+            }
+        }
+        public int I10
+        {
+            get => unknowni10;
+            set 
+            { 
+                unknowni10 = value; 
+                _isDirty = true;
+            }
+        }
+
+        public short S1
+        {
+            get => unknowns1;
+            set 
+            { 
+                unknowns2 = value;
+                _isDirty = true;
+            }
+        }
+        public short S2
+        {
+            get => unknowns2;
+            set 
+            { 
+                unknowns2 = value;
+                _isDirty = true;
+            }
+        }
+        #endregion
 
 
+        #region Serialization
         internal void Unserialize(DbpfReader reader)
         {
             type = (SlotItemType)reader.ReadUInt16();
@@ -268,8 +447,10 @@ namespace Sims2Tools.DBPF.SLOT
                 writer.WriteInt32(unknowni10);
             }
         }
+        #endregion
 
 
+        #region Xml Output
         public XmlElement AddXml(XmlElement parent)
         {
             XmlElement element = parent.OwnerDocument.CreateElement("item");
@@ -325,6 +506,7 @@ namespace Sims2Tools.DBPF.SLOT
             }
             return element;
         }
+        #endregion
 
         public string DiffString()
         {

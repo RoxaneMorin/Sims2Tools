@@ -12,11 +12,13 @@
 
 using Sims2Tools.DBPF.IO;
 using Sims2Tools.DBPF.Package;
+using Sims2Tools.DBPF.STR;
 using Sims2Tools.DBPF.Utils;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Xml;
+using static Sims2Tools.DBPF.Data.MetaData;
 
 namespace Sims2Tools.DBPF.SLOT
 {
@@ -32,37 +34,78 @@ namespace Sims2Tools.DBPF.SLOT
 
         private List<SlotItem> items;
 
-        public ReadOnlyCollection<SlotItem> Slots => items.AsReadOnly();
+
+        // Seen in SimPE's code, to consider:
+        // Bool CheckVersion(uint version) function.
+        // Get & Set slot item at index.
+        // Insert slot item at index.
+        // Add slot item.
+        // Remove slot item.
+        // Check whether a slot item exists.
+        // Count items.
+        // Clone both items and the Slot resource itself.
+
+
+        #region Constructors
+        public Slot(DBPFEntry entry) : base(entry) 
+        {
+            items = new List<SlotItem>();
+        }
 
         public Slot(DBPFEntry entry, DbpfReader reader) : base(entry)
         {
             Unserialize(reader);
         }
+        #endregion
 
+
+        #region Clean/Dirty State
+        public override bool IsDirty
+        {
+            get
+            {
+                if (base.IsDirty) return true;
+
+                foreach (SlotItem item in items)
+                {
+                    if (item.IsDirty) return true;
+                }
+
+                return false;
+            }
+        }
+
+        public override void SetClean()
+        {
+            foreach (SlotItem item in items)
+            {
+                item.SetClean();
+            } 
+
+            base.SetClean();
+        }
+        #endregion
+
+
+        #region Properties
         public uint Version
         {
             get => this.version;
+            set
+            {
+                version = value;
+                _isDirty = true;
+            }
         }
 
+        public uint TypeHandler => typeHandler;
+        public uint ClassID => classID;
 
-        // TODO: add getters, setters, possibly constructor(s).
-
-        // In the decompiled SimPE code, 
-        // classID/Unknown can be gotten and set. Doesn't seem pertinent if it's always zero.
-        // The Slot class has a constructor.
-        // bool CheckVersion(uint version) function.
-
-        // The decompiled code includes a separate "SlotItems" class derived from ArrayList.
-        // It includes:
-        // Get & Set the item at index.
-        // Add item.
-        // Insert item at index.
-        // Remove item.
-        // Contains item?
-        // Length/count property.
-        // Clone function.
+        public ReadOnlyCollection<SlotItem> Slots => items.AsReadOnly();
+        #endregion
 
 
+        #region Serialization
         protected void Unserialize(DbpfReader reader)
         {
             this._keyName = Helper.ToString(reader.ReadBytes(0x40));
@@ -115,8 +158,10 @@ namespace Sims2Tools.DBPF.SLOT
                 slotItem.Serialize(writer);
             }
         }
+        #endregion
 
 
+        #region Xml Output
         public override XmlElement AddXml(XmlElement parent)
         {
             XmlElement element = XmlHelper.CreateResElement(parent, NAME, this);
@@ -129,5 +174,6 @@ namespace Sims2Tools.DBPF.SLOT
 
             return element;
         }
+        #endregion
     }
 }
